@@ -1,8 +1,11 @@
 # syntax=docker/dockerfile:1
 
-# --- build: resolve + install deps with uv ---
-FROM ghcr.io/astral-sh/uv:0.12 AS builder
+# --- uv binary (distroless image, no shell) ---
+FROM ghcr.io/astral-sh/uv:0.12 AS uv
 
+# --- build: resolve + install deps with uv ---
+FROM python:3.14-slim AS builder
+COPY --from=uv /uv /uvx /bin/
 WORKDIR /app
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
 
