@@ -133,6 +133,9 @@ MEDIA_ROOT = BASE_DIR / "media"
 CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS")
 CORS_ALLOW_CREDENTIALS = True
 
+# Trusted origins for CSRF (needed when admin is served over HTTPS behind a proxy)
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+
 # ---------------------------------------------------------------------------
 # Django REST framework
 # ---------------------------------------------------------------------------
