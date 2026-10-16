@@ -96,9 +96,9 @@ class Command(BaseCommand):
                 ),
                 "typed_words": ["Django", "FastAPI", "Angular", "ClickHouse", "Telegram-боты"],
                 "primary_btn_text": "Обсудить проект",
-                "primary_btn_url": "#contact",
+                "primary_btn_url": "/contact",
                 "secondary_btn_text": "Смотреть услуги",
-                "secondary_btn_url": "#services",
+                "secondary_btn_url": "/services",
             },
         )
 
@@ -161,16 +161,39 @@ class Command(BaseCommand):
 
     def _categories_and_services(self):
         categories = {
-            "web": ("Веб-разработка", "Сайты и веб-приложения"),
-            "backend": ("Backend и API", "Серверная логика и интеграции"),
-            "automation": ("Интеграции и автоматизация", "Боты, парсеры, интеграции"),
-            "support": ("Сопровождение", "Поддержка и развитие продукта"),
+            "web": ("Веб-разработка", "🌐", "Сайты и веб-приложения"),
+            "backend": ("Backend и API", "⚙️", "Серверная логика и интеграции"),
+            "automation": ("Интеграции и автоматизация", "🤖", "Боты, парсеры, интеграции"),
+            "support": ("Сопровождение", "🛠️", "Поддержка и развитие продукта"),
         }
         cat_objs = {}
-        for slug, (name, desc) in categories.items():
+        for slug, (name, icon, desc) in categories.items():
             cat_objs[slug], _ = ServiceCategory.objects.update_or_create(
-                slug=slug, defaults={"name": name, "description": desc}
+                slug=slug, defaults={"name": name, "icon": icon, "description": desc}
             )
+
+        service_icons = {
+            "landing": "🚀",
+            "corporate-site": "🏢",
+            "ecommerce": "🛒",
+            "spa": "⚡",
+            "backend-api": "🔌",
+            "telegram-bots": "🤖",
+            "parsers": "🕸️",
+            "integrations": "🔗",
+            "support": "🛠️",
+        }
+        service_short_descriptions = {
+            "landing": "Продающий одностраничник для запуска продукта или услуги",
+            "corporate-site": "Многостраничный сайт компании с админкой и интеграциями",
+            "ecommerce": "Онлайн-магазин с каталогом, оплатой и личным кабинетом",
+            "spa": "Кастомное веб-приложение на Angular с REST API",
+            "backend-api": "Серверная часть: проектирование БД, API, аутентификация",
+            "telegram-bots": "Боты с диалогами, платежами и рассылками",
+            "parsers": "Автоматический сбор и обработка данных из источников",
+            "integrations": "Связываю системы: CRM, платежи, 1С, внешние API",
+            "support": "Сопровождение: исправления, доработки, мониторинг",
+        }
 
         services = [
             # Web
@@ -279,7 +302,8 @@ class Command(BaseCommand):
                 defaults={
                     "title": title,
                     "category": cat,
-                    "short_description": features[0] + " и другие задачи.",
+                    "icon": service_icons[slug],
+                    "short_description": service_short_descriptions[slug],
                     "price_from": price,
                     "price_type": Service.PriceType.FROM,
                     "duration": duration,
@@ -559,11 +583,11 @@ class Command(BaseCommand):
                 "slug": "stack-for-startup-2026",
                 "excerpt": "Практический разбор: на чём дешевле и быстрее собрать MVP.",
                 "content": (
-                    "## Введение\n\nВыбор стека определяет скорость и стоимость разработки.\n\n"
+                    "Выбор стека определяет скорость и стоимость разработки.\n\n"
                     "Для MVP чаще всего выигрывают связки Django/DRF + PostgreSQL на бэке "
-                    "и Angular/React на фронте: зрелая экосистема, быстрая разработка, "
+                    "и Angular на фронте: зрелая экосистема, быстрая разработка, "
                     "доступные специалисты.\n\n"
-                    "## Вывод\n\nНе гонитесь за модными инструментами — выбирайте то, "
+                    "Не гонитесь за модными инструментами — выбирайте то, "
                     "что ускоряет доставку ценности."
                 ),
                 "tags": ["стартап", "django", "angular"],
@@ -574,9 +598,9 @@ class Command(BaseCommand):
                 "slug": "clickhouse-telemetry",
                 "excerpt": "Поток CAN-логов через Redis Streams в ClickHouse: практика.",
                 "content": (
-                    "## Задача\n\nПринимать телеметрию испытательных стендов в реальном времени "
+                    "Принимать телеметрию испытательных стендов в реальном времени "
                     "и отдавать её в Grafana.\n\n"
-                    "## Решение\n\nRedis Streams буферизует поток, ClickHouse хранит и агрегирует, "
+                    "Redis Streams буферизует поток, ClickHouse хранит и агрегирует, "
                     "Grafana строит дашборды. Сквозной trace_id связывает запросы.\n\n"
                     "Итог — дашборды в реальном времени и алерты."
                 ),
