@@ -6,7 +6,11 @@ from django.contrib import admin
 from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
+from core.views import robots_view, sitemap_view
+
 urlpatterns = [
+    path("robots.txt", robots_view, name="robots"),
+    path("sitemap.xml", sitemap_view, name="sitemap"),
     path(settings.ADMIN_URL, admin.site.urls),
     path("api/v1/", include("core.urls")),
     path("api/v1/", include("services.urls")),
