@@ -29,6 +29,9 @@ SECRET_KEY = env("SECRET_KEY", default="django-insecure-dev-only-key")
 DEBUG = env("DEBUG")
 ALLOWED_HOSTS = env("ALLOWED_HOSTS")
 
+# Admin URL path (can be changed to hide the admin from scanners)
+ADMIN_URL = env("ADMIN_URL", default="admin/")
+
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 ROOT_URLCONF = "config.urls"
