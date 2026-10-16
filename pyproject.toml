@@ -1,0 +1,42 @@
+[project]
+name = "personal-site-back"
+version = "1.0.0"
+description = "Personal developer portfolio — backend (Django + DRF). Everything is configurable via admin and database."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "django>=6.1,<6.2",
+    "djangorestframework>=3.18,<3.19",
+    "django-cors-headers>=4.9,<5",
+    "django-filter>=26.2,<27",
+    "django-environ>=0.14,<0.15",
+    "drf-spectacular>=0.30,<0.31",
+    "psycopg[binary]>=3.3,<4",
+    "whitenoise>=6.12,<7",
+    "gunicorn>=26,<27",
+    "pillow>=12.3,<13",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4",
+    "pytest-django>=4.14",
+    "ruff>=0.12",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+extend-exclude = ["migrations", ".venv", "staticfiles", "media", ".git"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B", "C4", "DJ"]
+ignore = ["B008", "DJ012"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+addopts = "-q"
