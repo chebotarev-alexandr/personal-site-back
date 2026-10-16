@@ -14,5 +14,3 @@ media/
 .mypy_cache/
 .idea/
 .vscode/
-Dockerfile
-docker-compose.yml
