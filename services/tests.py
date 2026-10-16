@@ -32,3 +32,26 @@ class ServiceEndpointTests(TestCase):
         resp = self.client.get(reverse("services:service-detail", kwargs={"slug": "landing"}))
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.data["slug"], "landing")
+
+
+class ReferenceListEndpointsTests(TestCase):
+    """Categories/technologies/pricing/process must return plain arrays (frontend expects lists)."""
+
+    def setUp(self):
+        self.client = APIClient()
+
+    def test_reference_endpoints_return_lists_not_paginated(self):
+        endpoints = [
+            "services:category-list",
+            "services:technology-list",
+            "services:pricing-list",
+            "services:process-list",
+        ]
+        for name in endpoints:
+            resp = self.client.get(reverse(name))
+            self.assertEqual(resp.status_code, 200, name)
+            self.assertIsInstance(
+                resp.data,
+                list,
+                f"{name} должен отдавать список, а не объект пагинации",
+            )

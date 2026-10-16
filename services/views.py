@@ -15,6 +15,7 @@ from .serializers import (
 class ServiceCategoryListView(generics.ListAPIView):
     serializer_class = ServiceCategorySerializer
     queryset = ServiceCategory.objects.filter(is_active=True)
+    pagination_class = None
 
 
 class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
@@ -32,13 +33,16 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
 class TechnologyListView(generics.ListAPIView):
     serializer_class = TechnologySerializer
     queryset = Technology.objects.filter(is_active=True)
+    pagination_class = None
 
 
 class PricingPlanListView(generics.ListAPIView):
     serializer_class = PricingPlanSerializer
     queryset = PricingPlan.objects.filter(is_active=True).select_related("service")
+    pagination_class = None
 
 
 class ProcessStepListView(generics.ListAPIView):
     serializer_class = ProcessStepSerializer
     queryset = ProcessStep.objects.filter(is_active=True)
+    pagination_class = None
