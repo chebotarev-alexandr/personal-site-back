@@ -2,6 +2,8 @@
 
 from rest_framework import serializers
 
+from common.fields import RelativeImageField
+
 from .models import Project, ProjectImage, ProjectTag
 
 
@@ -12,6 +14,8 @@ class ProjectTagSerializer(serializers.ModelSerializer):
 
 
 class ProjectImageSerializer(serializers.ModelSerializer):
+    image = RelativeImageField()
+
     class Meta:
         model = ProjectImage
         fields = ["id", "image", "alt"]
@@ -20,6 +24,7 @@ class ProjectImageSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     tags = ProjectTagSerializer(many=True, read_only=True)
     images = ProjectImageSerializer(many=True, read_only=True)
+    cover = RelativeImageField()
 
     class Meta:
         model = Project

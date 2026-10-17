@@ -2,10 +2,14 @@
 
 from rest_framework import serializers, viewsets
 
+from common.fields import RelativeImageField
+
 from .models import Post
 
 
 class PostSerializer(serializers.ModelSerializer):
+    cover = RelativeImageField()
+
     class Meta:
         model = Post
         fields = [

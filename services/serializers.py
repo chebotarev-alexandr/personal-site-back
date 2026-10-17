@@ -2,6 +2,8 @@
 
 from rest_framework import serializers
 
+from common.fields import RelativeImageField
+
 from .models import PricingPlan, ProcessStep, Service, ServiceCategory, Technology
 
 
@@ -15,6 +17,7 @@ class ServiceSerializer(serializers.ModelSerializer):
     category = ServiceCategorySerializer(read_only=True)
     category_slug = serializers.SlugRelatedField(source="category", slug_field="slug", read_only=True)
     price_type_label = serializers.CharField(source="get_price_type_display", read_only=True)
+    image = RelativeImageField()
 
     class Meta:
         model = Service
