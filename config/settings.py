@@ -197,6 +197,8 @@ DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="noreply@localhost")
 LEAD_NOTIFY_EMAIL = env("LEAD_NOTIFY_EMAIL", default="")
 TELEGRAM_BOT_TOKEN = env("TELEGRAM_BOT_TOKEN", default="")
 TELEGRAM_CHAT_ID = env("TELEGRAM_CHAT_ID", default="")
+TELEGRAM_RELAY_URL = env("TELEGRAM_RELAY_URL", default="")
+TELEGRAM_RELAY_SECRET = env("TELEGRAM_RELAY_SECRET", default="")
 
 # ---------------------------------------------------------------------------
 # Security hardening (production)

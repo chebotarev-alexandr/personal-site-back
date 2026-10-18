@@ -62,6 +62,19 @@ def _send_telegram(token: str, chat_id: str, text: str) -> bool:
         return False
 
 
+def _post_to_relay(relay_url: str, secret: str, text: str) -> bool:
+    data = json.dumps({"secret": secret, "text": text}).encode("utf-8")
+    request = urllib.request.Request(
+        relay_url, data=data, headers={"Content-Type": "application/json"}, method="POST"
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=8) as response:
+            return response.status == 200
+    except Exception as exc:  # noqa: BLE001 - fail-silent by design
+        logger.warning("Relay notify failed: %s", exc)
+        return False
+
+
 def notify_lead(lead: Lead) -> None:
     """Notify about a new lead: email (if configured) + Telegram (if configured)."""
     recipient = settings.LEAD_NOTIFY_EMAIL
@@ -75,11 +88,17 @@ def notify_lead(lead: Lead) -> None:
         )
 
     enabled, token, chat_id = _telegram_config()
-    if not (enabled and token and chat_id):
+    if not enabled:
         return
 
     text = f"🔔 Новая заявка с сайта\n\n{_lead_summary(lead)}"
-    # Off the request path so form submission stays fast.
-    threading.Thread(
-        target=_send_telegram, args=(token, chat_id, text), daemon=True
-    ).start()
+
+    # Prefer the relay (for hosts that can't reach Telegram directly, e.g. RU
+    # ISP blocks); fall back to a direct send. Runs off the request path so
+    # form submission stays fast.
+    relay_url = getattr(settings, "TELEGRAM_RELAY_URL", "")
+    if relay_url:
+        relay_secret = getattr(settings, "TELEGRAM_RELAY_SECRET", "")
+        threading.Thread(target=_post_to_relay, args=(relay_url, relay_secret, text), daemon=True).start()
+    elif token and chat_id:
+        threading.Thread(target=_send_telegram, args=(token, chat_id, text), daemon=True).start()
