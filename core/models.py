@@ -41,6 +41,11 @@ class SiteSettings(SingletonModel, TimeStampedModel):
     meta_description = models.CharField("Meta description", max_length=255, blank=True)
     analytics_code = models.TextField("Код аналитики (Yandex.Metrika / GA)", blank=True)
 
+    # Уведомления о новых заявках (Telegram)
+    telegram_alerts_enabled = models.BooleanField("Telegram-уведомления включены", default=True)
+    telegram_bot_token = models.CharField("Telegram: токен бота", max_length=255, blank=True)
+    telegram_chat_id = models.CharField("Telegram: chat_id для уведомлений", max_length=120, blank=True)
+
     class Meta:
         verbose_name = "Настройки сайта"
         verbose_name_plural = "Настройки сайта"

@@ -23,6 +23,7 @@ class SiteSettingsAdmin(SingletonAdmin):
         ("Контакты", {"fields": ("email", "phone", "telegram", "whatsapp", "city", "address", "work_hours")}),
         ("Подвал", {"fields": ("footer_description", "copyright_text")}),
         ("SEO / аналитика", {"fields": ("meta_title", "meta_description", "analytics_code")}),
+        ("Уведомления (Telegram)", {"fields": ("telegram_alerts_enabled", "telegram_bot_token", "telegram_chat_id")}),
     )
 
 
