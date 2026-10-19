@@ -143,9 +143,11 @@ CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 # Django REST framework
 # ---------------------------------------------------------------------------
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
-    ],
+    # The whole API is public (read-only content + public lead forms), so no
+    # authentication is required. SessionAuthentication is intentionally NOT
+    # enabled: it would enforce CSRF on form POSTs whenever the browser holds
+    # an admin session cookie, breaking the lead forms.
+    "DEFAULT_AUTHENTICATION_CLASSES": [],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
     ],

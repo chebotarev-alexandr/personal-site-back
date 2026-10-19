@@ -90,3 +90,19 @@ class LeadEndpointTests(TestCase):
         resp = self.client.get(reverse("leads:budgets"))
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(len(resp.data), 1)
+
+    def test_lead_post_ignores_admin_session_csrf(self):
+        """Form POSTs must stay 201 even when a browser session cookie exists."""
+        from django.contrib.auth import get_user_model
+
+        User = get_user_model()
+        User.objects.create_user("manager", password="pw")
+        client = APIClient(enforce_csrf_checks=True)
+        client.force_login(User.objects.get(username="manager"))
+
+        resp = client.post(
+            reverse("leads:contact"),
+            {"name": "Иван", "email": "i@example.com"},
+            format="json",
+        )
+        self.assertEqual(resp.status_code, 201)
