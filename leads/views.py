@@ -70,7 +70,7 @@ class LeadCreateView(generics.CreateAPIView):
         # 4. Капча на повторную отправку с одного IP.
         if recent >= 1 and not verify_smartcaptcha(request.data.get("smart_token", ""), ip):
             return Response(
-                {"detail": "captcha_required", "code": "captcha_required"},
+                {"detail": "Пройдите проверку «Я не робот» и отправьте форму ещё раз.", "code": "captcha_required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
