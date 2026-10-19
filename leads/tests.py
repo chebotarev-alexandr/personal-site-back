@@ -1,10 +1,10 @@
 """Tests for lead endpoints — every form type and its validation."""
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from leads.models import BudgetRange, Lead
+from leads.models import BlockedIP, BudgetRange, Lead
 from services.models import Service, ServiceCategory
 
 
@@ -106,3 +106,29 @@ class LeadEndpointTests(TestCase):
             format="json",
         )
         self.assertEqual(resp.status_code, 201)
+
+    def test_rate_limit_blocks_after_limit(self):
+        payload = {"name": "Иван", "email": "i@example.com"}
+        for _ in range(3):
+            self.assertEqual(self._post("contact", payload).status_code, 201)
+        self.assertEqual(self._post("contact", payload).status_code, 429)
+
+    def test_sql_injection_rejected(self):
+        resp = self._post(
+            "contact",
+            {"name": "Иван", "email": "i@example.com", "message": "'; DROP TABLE leads; --"},
+        )
+        self.assertEqual(resp.status_code, 400)
+
+    @override_settings(YC_SMARTCAPTCHA_SERVER_KEY="test-secret")
+    def test_captcha_required_on_repeat(self):
+        payload = {"name": "Иван", "email": "i@example.com"}
+        self.assertEqual(self._post("contact", payload).status_code, 201)
+        resp = self._post("contact", payload)
+        self.assertEqual(resp.status_code, 400)
+        self.assertEqual(resp.data.get("code"), "captcha_required")
+
+    def test_blocked_ip_forbidden(self):
+        BlockedIP.objects.create(ip="127.0.0.1")
+        resp = self._post("contact", {"name": "Иван", "email": "i@example.com"})
+        self.assertEqual(resp.status_code, 403)

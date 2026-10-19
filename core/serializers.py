@@ -6,6 +6,8 @@ from .models import AboutSection, HeroSection, SiteSettings, SocialLink, Stat
 
 
 class SiteSettingsSerializer(serializers.ModelSerializer):
+    smartcaptcha_client_key = serializers.SerializerMethodField()
+
     class Meta:
         model = SiteSettings
         fields = [
@@ -28,7 +30,13 @@ class SiteSettingsSerializer(serializers.ModelSerializer):
             "meta_title",
             "meta_description",
             "analytics_code",
+            "smartcaptcha_client_key",
         ]
+
+    def get_smartcaptcha_client_key(self, obj) -> str:
+        from django.conf import settings
+
+        return getattr(settings, "YC_SMARTCAPTCHA_CLIENT_KEY", "")
 
 
 class SocialLinkSerializer(serializers.ModelSerializer):

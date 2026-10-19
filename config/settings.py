@@ -65,6 +65,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "common.middleware.BlockedIPMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -201,6 +202,15 @@ TELEGRAM_BOT_TOKEN = env("TELEGRAM_BOT_TOKEN", default="")
 TELEGRAM_CHAT_ID = env("TELEGRAM_CHAT_ID", default="")
 TELEGRAM_RELAY_URL = env("TELEGRAM_RELAY_URL", default="")
 TELEGRAM_RELAY_SECRET = env("TELEGRAM_RELAY_SECRET", default="")
+
+# Защита форм: Яндекс SmartCaptcha + rate-limit + чёрный список IP
+YC_SMARTCAPTCHA_SERVER_KEY = env("YC_SMARTCAPTCHA_SERVER_KEY", default="")
+YC_SMARTCAPTCHA_CLIENT_KEY = env("YC_SMARTCAPTCHA_CLIENT_KEY", default="")
+LEAD_RATE_LIMIT_PER_DAY = env.int("LEAD_RATE_LIMIT_PER_DAY", default=3)
+LEAD_BLACKLIST_THRESHOLD = env.int("LEAD_BLACKLIST_THRESHOLD", default=30)
+NGINX_BLACKLIST_FILE = env(
+    "NGINX_BLACKLIST_FILE", default=str(BASE_DIR / "blacklist" / "blocked.conf")
+)
 
 # ---------------------------------------------------------------------------
 # Security hardening (production)

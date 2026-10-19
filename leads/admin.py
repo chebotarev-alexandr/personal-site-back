@@ -2,13 +2,21 @@
 
 from django.contrib import admin
 
-from .models import BudgetRange, Lead
+from .models import BlockedIP, BudgetRange, Lead
 
 
 @admin.register(BudgetRange)
 class BudgetRangeAdmin(admin.ModelAdmin):
     list_display = ("label", "sort_order")
     list_editable = ("sort_order",)
+
+
+@admin.register(BlockedIP)
+class BlockedIPAdmin(admin.ModelAdmin):
+    list_display = ("ip", "reason", "is_active", "created_at")
+    list_editable = ("is_active",)
+    list_filter = ("is_active",)
+    search_fields = ("ip", "reason")
 
 
 @admin.register(Lead)

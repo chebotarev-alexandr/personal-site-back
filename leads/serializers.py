@@ -7,7 +7,7 @@ client — so a forged payload cannot change the lead's type.
 
 from rest_framework import serializers
 
-from common.validators import validate_phone
+from common.validators import validate_no_sql_injection, validate_phone
 from services.models import Service
 
 from .models import BudgetRange, Lead
@@ -17,8 +17,19 @@ class LeadSerializer(serializers.Serializer):
     """Base for all lead forms: injects the lead type on create."""
 
     request_type: str = Lead.Type.CONTACT
+    smart_token = serializers.CharField(write_only=True, required=False, allow_blank=True)
+
+    def validate(self, attrs):
+        # Защита в глубину от SQL-инъекций во всех текстовых полях.
+        for key, value in attrs.items():
+            if key == "smart_token":
+                continue
+            if isinstance(value, str):
+                validate_no_sql_injection(value)
+        return attrs
 
     def create(self, validated_data):
+        validated_data.pop("smart_token", None)
         validated_data["type"] = self.request_type
         return Lead.objects.create(**validated_data)
 

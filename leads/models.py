@@ -82,3 +82,31 @@ class Lead(TimeStampedModel):
 
     def __str__(self) -> str:
         return f"{self.get_type_display()} — {self.name or self.email or self.phone or self.pk}"
+
+
+class BlockedIP(TimeStampedModel):
+    """IP в чёрном списке (защита от DoS). Проверяется middleware + nginx."""
+
+    ip = models.GenericIPAddressField("IP-адрес", unique=True)
+    reason = models.CharField("Причина", max_length=255, blank=True)
+    is_active = models.BooleanField("Активна", default=True, db_index=True)
+
+    class Meta:
+        verbose_name = "Заблокированный IP"
+        verbose_name_plural = "Заблокированные IP"
+
+    def __str__(self) -> str:
+        return f"{self.ip} — {self.reason or 'без причины'}"
+
+
+class LeadAttempt(TimeStampedModel):
+    """Запись о каждой попытке отправки формы (для защиты от DoS)."""
+
+    ip = models.GenericIPAddressField("IP-адрес", db_index=True)
+
+    class Meta:
+        verbose_name = "Попытка отправки формы"
+        verbose_name_plural = "Попытки отправки форм"
+
+    def __str__(self) -> str:
+        return f"{self.ip} — {self.created_at:%d.%m.%Y %H:%M}"
