@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "skills",
     "blog",
     "faq",
+    "chat",
 ]
 
 MIDDLEWARE = [
@@ -211,6 +212,10 @@ LEAD_BLACKLIST_THRESHOLD = env.int("LEAD_BLACKLIST_THRESHOLD", default=30)
 NGINX_BLACKLIST_FILE = env(
     "NGINX_BLACKLIST_FILE", default=str(BASE_DIR / "blacklist" / "blocked.conf")
 )
+
+# Чат-виджет на сайте: мост в Telegram (Amsterdam) + секрет для ответов владельца
+CHAT_BRIDGE_URL = env("CHAT_BRIDGE_URL", default="")
+CHAT_SECRET = env("CHAT_SECRET", default="")
 
 # ---------------------------------------------------------------------------
 # Security hardening (production)
