@@ -21,17 +21,19 @@ from blog.models import Post
 from faq.models import FAQCategory, FAQItem
 from projects.models import Project, ProjectTag
 from services.models import PricingPlan, Service, ServiceCategory
+from testimonials.models import Testimonial
 
 # Прямые ссылки на стоковые картинки (Unsplash). w/h/fit=crop даёт 3:2.
 IMAGES = {
     "ats": "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=1200&h=800&fit=crop&q=80&fm=jpg",
-    "road-works": "https://images.unsplash.com/photo-1503708928676-1cb796a0891e?w=1200&h=800&fit=crop&q=80&fm=jpg",
-    "courier-bot": "https://images.unsplash.com/photo-1617347454431-f49d7ff5c3b1?w=1200&h=800&fit=crop&q=80&fm=jpg",
-    "1c": "https://images.unsplash.com/photo-1709880945165-d2208c6ad2ec?w=1200&h=800&fit=crop&q=80&fm=jpg",
-    "deepseek-plugin": "https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?w=1200&h=800&fit=crop&q=80&fm=jpg",
-    "personal-site": "https://images.unsplash.com/photo-1518773553398-650c184e0bb3?w=1200&h=800&fit=crop&q=80&fm=jpg",
-    "analytics": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=800&fit=crop&q=80&fm=jpg",
+    "road-works": "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1200&h=800&fit=crop&q=80&fm=jpg",
+    "courier-bot": "https://images.unsplash.com/photo-1526367790999-0150786686a2?w=1200&h=800&fit=crop&q=80&fm=jpg",
+    "1c": "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1200&h=800&fit=crop&q=80&fm=jpg",
+    "deepseek-plugin": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&h=800&fit=crop&q=80&fm=jpg",
+    "personal-site": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&h=800&fit=crop&q=80&fm=jpg",
+    "analytics": "https://images.unsplash.com/photo-1543286386-713bdd548da4?w=1200&h=800&fit=crop&q=80&fm=jpg",
     "infra": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&h=800&fit=crop&q=80&fm=jpg",
+    "remember-bot": "https://images.unsplash.com/photo-1501139083538-0139583c060f?w=1200&h=800&fit=crop&q=80&fm=jpg",
     "blog-deepseek": "https://images.unsplash.com/photo-1765445665883-085301570c87?w=1200&h=800&fit=crop&q=80&fm=jpg",
     "blog-clickhouse": "https://images.unsplash.com/photo-1666875753105-c63a6f3bdc86?w=1200&h=800&fit=crop&q=80&fm=jpg",
     "blog-loki": "https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2?w=1200&h=800&fit=crop&q=80&fm=jpg",
@@ -67,6 +69,7 @@ class Command(BaseCommand):
         self._services()
         self._pricing()
         self._faq()
+        self._testimonials()
         self._blog()
         self.stdout.write(self.style.SUCCESS("Расширенный контент загружен."))
 
@@ -95,6 +98,8 @@ class Command(BaseCommand):
     # ------------------------------------------------------------- projects
 
     def _projects(self):
+        counter = [0]
+
         def add(data):
             slug = data["slug"]
             cover_key = data.pop("cover_key", None)
@@ -102,6 +107,8 @@ class Command(BaseCommand):
             cover = self._image(cover_key, f"projects/{slug}.jpg") if cover_key else None
             if cover:
                 data["cover"] = cover
+            data["sort_order"] = counter[0]
+            counter[0] += 1
             project, _ = Project.objects.update_or_create(slug=slug, defaults=data)
             project.tags.set([self._tags[t] for t in tag_slugs])
 
@@ -132,6 +139,39 @@ class Command(BaseCommand):
             ],
             "is_featured": True,
             "cover_key": "ats",
+        })
+
+        add({
+            "title": "Remember — бот напоминаний в Telegram",
+            "slug": "remember-bot",
+            "client": "Личный проект",
+            "year": 2026,
+            "short_description": "Бот-напоминатель с кнопочным интерфейсом, тарифами и админкой — работает прямо сейчас.",
+            "description": (
+                "Бот, который напоминает о делах в нужный момент. **Работает прямо сейчас** — "
+                "напишите ему и поставьте напоминание за минуту.\n\n"
+                "## Что умеет\n\n"
+                "- **Однократные и регулярные напоминания** — ежедневно, по дням недели или раз в месяц.\n"
+                "- **Часовые пояса** — у каждого пользователя свой пояс, планировщик считает по локальному времени.\n"
+                "- **Интерактивный выбор даты и времени** — встроенный календарь и подбор времени кнопками.\n"
+                "- **Тарифы** — бесплатно до 10 регулярных и 3 однократных напоминаний, премиум — без ограничений.\n\n"
+                "## Под капотом\n\n"
+                "Python, aiogram 3 и Django для админки, всё в Docker. Админка даёт ручную выдачу премиума, "
+                "блокировку пользователей и просмотр напоминаний. Планировщик проверяет очередь каждые "
+                "30 секунд и отправляет напоминания по часовому поясу получателя."
+            ),
+            "tags": ["telegram", "django", "opensource"],
+            "stack": ["Python", "aiogram 3", "Django", "Docker", "SQLite"],
+            "results": [
+                "Кнопочный интерфейс — без единой команды",
+                "Часовые пояса и регулярные напоминания",
+                "Тарифы и админка с выдачей премиума",
+                "Работает в продакшене, открытый код",
+            ],
+            "is_featured": True,
+            "url": "https://t.me/remember_me_at_the_time_bot",
+            "repository_url": "https://github.com/chebotarev-alexandr/Remember_bot",
+            "cover_key": "remember-bot",
         })
 
         add({
@@ -271,6 +311,8 @@ class Command(BaseCommand):
                 "Деплой в Docker с HTTPS",
             ],
             "is_featured": False,
+            "url": "https://code-orbit.ru",
+            "repository_url": "https://github.com/chebotarev-alexandr/persinal-site-front",
             "cover_key": "personal-site",
         })
 
@@ -327,6 +369,12 @@ class Command(BaseCommand):
             "is_featured": False,
             "cover_key": "analytics",
         })
+
+        # Старые демо-проекты из seed_demo (без обложек и описаний) — скрываем,
+        # чтобы не портили портфолио. В админке можно включить обратно.
+        Project.objects.filter(
+            slug__in=["satellite-ordering", "support-bot", "corporate-portal"]
+        ).update(is_active=False)
 
     # ------------------------------------------------------------- services
 
@@ -665,6 +713,104 @@ class Command(BaseCommand):
             FAQItem.objects.update_or_create(
                 category=cat_objs[cat_slug], question=q, defaults={"answer": a, "sort_order": i}
             )
+
+    # --------------------------------------------------------- testimonials
+
+    def _testimonials(self):
+        data = [
+            {
+                "author": "Дмитрий",
+                "position": "Технический директор",
+                "company": "Спутниковое приборостроение",
+                "rating": 5,
+                "text": (
+                    "Александр собирал нам платформу телеметрии практически с нуля. Раньше данные со "
+                    "стендов разбирали вручную и ловили ошибки неделями. Теперь всё стекается в "
+                    "ClickHouse, а на дашбордах картина видна в реальном времени. Отдельное спасибо "
+                    "за сквозную трассировку: любую аномалию находим по одному идентификатору, а не "
+                    "копаемся в разрозненных логах. Код чистый, документация на месте — команда "
+                    "спокойно развивает систему дальше без него."
+                ),
+            },
+            {
+                "author": "Мария",
+                "position": "Product-менеджер",
+                "company": "Гео-сервис",
+                "rating": 5,
+                "text": (
+                    "Боялась, что подрядчик будет долго вникать в нашу гео-предметку. Александр уже "
+                    "через пару дней задавал вопросы глубже, чем мы сами себе задавали, и предлагал "
+                    "решения, до которых мы не дошли. На каждом демо показывал рабочий результат, а "
+                    "не презентацию, сроки соблюдал. Сдали проект даже чуть раньше дедлайна — для "
+                    "нашей отрасли это редкость."
+                ),
+            },
+            {
+                "author": "Игорь",
+                "position": "Основатель",
+                "company": "Сервисный бизнес",
+                "rating": 4,
+                "text": (
+                    "Бот закрыл примерно две трети типовых обращений — менеджеры наконец занимаются "
+                    "сложными кейсами, а не «здравствуйте, чем помочь». Настроил приём платежей "
+                    "прямо в боте, клиенты довольны. Коммуникация отдельный плюс: всегда на связи и "
+                    "объясняет на человеческом языке, а не техническим жаргоном. Минус звезду ставлю "
+                    "только за то, что хочется ещё больше функций."
+                ),
+            },
+            {
+                "author": "Сергей",
+                "position": "Руководитель отдела эксплуатации",
+                "company": "Дорожно-строительная компания",
+                "rating": 5,
+                "text": (
+                    "У нас десятки объектов по городу, и картина по каждому жила в головах прорабов "
+                    "и разрозненных таблицах. Александр сделал интерактивную карту, на которую всё "
+                    "наносится: объёмы, сроки, ответственные, фото. Теперь на планёрке просто "
+                    "открываем систему и видим, где отстаём от графика. Через месяц уже не "
+                    "представляем, как работали без этого."
+                ),
+            },
+            {
+                "author": "Анна",
+                "position": "Операционный директор",
+                "company": "Сеть ресторанов",
+                "rating": 5,
+                "text": (
+                    "Доставка была самым больным местом: заказы и курьеров распределяли вручную, "
+                    "вечные ошибки и недовольные клиенты. Бот раздаёт заказы сам, курьер видит адрес "
+                    "и состав, а мы — каждый заказ на карте. Жалоб на доставку стало в разы меньше. "
+                    "Внедрили быстро и без остановки работы ресторанов — для нас это было критично."
+                ),
+            },
+            {
+                "author": "Павел",
+                "position": "Начальник ИТ-отдела",
+                "company": "Производственная компания",
+                "rating": 5,
+                "text": (
+                    "Синхронизация с 1С у нас была ручной: люди переносили данные руками и, конечно, "
+                    "ошибались. Александр настроил автоматический обмен с журналом операций — если "
+                    "что-то не сошлось, сразу видно, на каком шаге и по какой записи. Двойной ввод "
+                    "исчез, а вместе с ним — расхождения, которые мы месяцами вылавливали вручную."
+                ),
+            },
+            {
+                "author": "Олег",
+                "position": "CTO",
+                "company": "SaaS-стартап",
+                "rating": 5,
+                "text": (
+                    "Пришёл навести порядок в хаосе: сервисы без нормальных логов, деплой руками, "
+                    "мониторинга нет. Александр собрал Docker-инфраструктуру, централизованные логи "
+                    "в Loki и дашборды в Grafana с алертами. Теперь инциденты видим раньше, чем о "
+                    "них узнают пользователи. Всё описано конфигурацией — сервер поднимается с нуля "
+                    "за считанные минуты."
+                ),
+            },
+        ]
+        for i, item in enumerate(data):
+            Testimonial.objects.update_or_create(author=item["author"], defaults={**item, "sort_order": i})
 
     # ------------------------------------------------------------------- blog
 

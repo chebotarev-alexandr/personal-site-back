@@ -1,6 +1,9 @@
 """Admin configuration for blog."""
 
 from django.contrib import admin
+from django.db import models
+
+from core.widgets import MarkdownEditorWidget
 
 from .models import Post
 
@@ -12,6 +15,9 @@ class PostAdmin(admin.ModelAdmin):
     list_filter = ("is_published", "created_at")
     search_fields = ("title", "excerpt", "content")
     prepopulated_fields = {"slug": ("title",)}
+    formfield_overrides = {
+        models.TextField: {"widget": MarkdownEditorWidget},
+    }
     fieldsets = (
         ("Основное", {"fields": ("title", "slug", "excerpt", "content", "tags")}),
         ("Медиа", {"fields": ("cover",)}),

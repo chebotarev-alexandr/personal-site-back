@@ -1,6 +1,9 @@
 """Admin configuration for the projects app."""
 
 from django.contrib import admin
+from django.db import models
+
+from core.widgets import MarkdownEditorWidget
 
 from .models import Project, ProjectImage, ProjectTag
 
@@ -27,6 +30,9 @@ class ProjectAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
     filter_horizontal = ("tags",)
     inlines = [ProjectImageInline]
+    formfield_overrides = {
+        models.TextField: {"widget": MarkdownEditorWidget},
+    }
     fieldsets = (
         ("Основное", {"fields": ("title", "slug", "client", "year", "short_description", "description")}),
         ("Медиа и ссылки", {"fields": ("cover", "url", "repository_url")}),
