@@ -217,6 +217,11 @@ NGINX_BLACKLIST_FILE = env(
 CHAT_BRIDGE_URL = env("CHAT_BRIDGE_URL", default="")
 CHAT_SECRET = env("CHAT_SECRET", default="")
 
+# Антиспам чата: rate-limit → капча → блокировка IP
+CHAT_SPAM_WINDOW_SECONDS = env.int("CHAT_SPAM_WINDOW_SECONDS", default=30)
+CHAT_SPAM_MAX_MESSAGES = env.int("CHAT_SPAM_MAX_MESSAGES", default=5)
+CHAT_BLACKLIST_THRESHOLD = env.int("CHAT_BLACKLIST_THRESHOLD", default=20)
+
 # ---------------------------------------------------------------------------
 # Security hardening (production)
 # ---------------------------------------------------------------------------

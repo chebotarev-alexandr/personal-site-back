@@ -36,8 +36,12 @@ def _send(payload: dict) -> bool:
 def notify_chat_message(session, message) -> None:
     """Notify the owner about a new incoming chat message (off the request path)."""
     secret = getattr(settings, "CHAT_SECRET", "")
+    name = session.name or "Не указано"
+    contact = session.contact or "—"
     text = (
         "🔔 Новое сообщение в чате сайта\n\n"
+        f"👤 Имя: {name}\n"
+        f"📞 Контакт: {contact}\n"
         f"💬 {message.text}\n\n"
         f"🔑 Сессия: {session.uid.hex[:8]}"
     )

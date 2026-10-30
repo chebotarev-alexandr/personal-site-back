@@ -17,10 +17,10 @@ class ChatMessageInline(admin.TabularInline):
 
 @admin.register(ChatSession)
 class ChatSessionAdmin(admin.ModelAdmin):
-    list_display = ("uid_short", "ip", "is_open", "created_at", "updated_at")
+    list_display = ("uid_short", "name", "contact", "ip", "is_open", "created_at", "updated_at")
     list_filter = ("is_open", "created_at")
-    search_fields = ("uid", "ip")
-    readonly_fields = ("uid", "ip", "created_at", "updated_at")
+    search_fields = ("uid", "ip", "name", "contact")
+    readonly_fields = ("uid", "ip", "name", "contact", "captcha_passed_at", "created_at", "updated_at")
     inlines = [ChatMessageInline]
     actions = ["close_sessions"]
 
