@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1
-
 # --- uv binary (distroless image, no shell) ---
 FROM ghcr.io/astral-sh/uv:0.12 AS uv
 
